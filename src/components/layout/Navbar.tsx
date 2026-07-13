@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Menu, X, BookOpen, User } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
 
 export default function Navbar() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const { data: session } = useSession();
 
@@ -13,21 +15,26 @@ export default function Navbar() {
     { href: "/", label: "হোম" },
     { href: "/books", label: "বই খুঁজুন" },
     { href: "/about", label: "আমাদের সম্পর্কে" },
-      { href: "/contact", label: "যোগাযোগ" },
+    { href: "/contact", label: "যোগাযোগ" },
   ];
 
   const loggedInLinks = [
     { href: "/", label: "হোম" },
     { href: "/books", label: "বই খুঁজুন" },
-    { href: "/dashboard", label: "ড্যাশবোর্ড" }, 
+    { href: "/dashboard", label: "ড্যাশবোর্ড" },
     { href: "/items/add", label: "বই যোগ করুন" },
     { href: "/items/manage", label: "আমার বই" },
     { href: "/about", label: "আমাদের সম্পর্কে" },
     { href: "/contact", label: "যোগাযোগ" },
-    
   ];
 
   const links = session ? loggedInLinks : loggedOutLinks;
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/login");
+    router.refresh();
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 shadow-sm">
@@ -58,7 +65,7 @@ export default function Navbar() {
                 </span>
               </div>
               <button
-                onClick={() => signOut()}
+                onClick={handleSignOut}
                 className="px-4 py-2 rounded-lg bg-secondary text-white font-medium hover:opacity-90 transition"
               >
                 লগআউট
@@ -106,7 +113,7 @@ export default function Navbar() {
                 </span>
               </div>
               <button
-                onClick={() => signOut()}
+                onClick={handleSignOut}
                 className="px-4 py-2 rounded-lg bg-secondary text-white font-medium"
               >
                 লগআউট
